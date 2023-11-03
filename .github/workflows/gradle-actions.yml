@@ -52,6 +52,16 @@ jobs:
     # gradle jar 빌드
     - name: Build with Gradle
       run: ./gradlew clean build
+
+    # jar 파일 업로드
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        # 업로드 파일 이름
+        name: build
+        # 실제 파일 경로
+        path: build
+
   
   build_and_docker_push:
     name: Build and Push Docker Image
@@ -67,6 +77,13 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+
+      # 업로드한 jar 파일 다운로드
+      - name: Download a Build Artifact
+        uses: actions/download-artifact@v3
+        with:
+          # 다운로드 받을 파일 이름
+          name: build
 
       # docker 이미지 빌드
       - name: Build Docker Image
