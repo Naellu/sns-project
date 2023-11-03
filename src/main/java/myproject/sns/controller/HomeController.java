@@ -12,4 +12,9 @@ public class HomeController {
     public String home() {
         return "hello world!";
     }
+
+    @GetMapping("/action")
+    public String actionsTest() {
+        return "github actions normal operation!";
+    }
 }
