@@ -18,7 +18,7 @@ permissions:
 
 jobs:
   build_and_test:
-    name: sns-project docker build
+    name: Build gradle
     runs-on: ubuntu-latest
     steps:
 
@@ -32,7 +32,7 @@ jobs:
         java-version: '11'
         distribution: 'temurin'
 
-    - name: Cache
+    - name: gradle Cache
       uses: actions/cache@v3.3.2
       with:
         # 캐싱할 파일이 있는 경로와 복구할 경로
@@ -44,6 +44,10 @@ jobs:
         # 키에 대해 캐시 적중이 발생하지 않은 경우 오래된 캐시를 복원하는 데 사용할 키의 순서가 매겨진 목록. 이 경우 'cache-hit'은 false를 반환
         restore-keys: | # optional
           ${{ runner.os }}-gradle-
+
+    # gradlew 권한 부여
+    - name: Grant execute permission for gradlew
+      run: chmod +x ./gradlew
 
     # gradle jar 빌드
     - name: Build with Gradle
@@ -61,7 +65,7 @@ jobs:
       - name: Login to Docker hub
         uses: docker/login-action@v1
         with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME}}
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
       # docker 이미지 빌드
@@ -69,7 +73,7 @@ jobs:
         run: docker build . -t ${{ secrets.DOCKER_HUB_USERNAME }}/sns-project:${{ github.sha }}
   
       # docker hub에 이미지 올리기
-      - name: Push Docker Iamge to Docker hub
+      - name: Push Docker Image to Docker hub
         run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/sns-project:${{ github.sha }}
 
       
