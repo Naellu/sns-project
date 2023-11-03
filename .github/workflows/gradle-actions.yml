@@ -51,7 +51,7 @@ jobs:
 
     # gradle jar 빌드
     - name: Build with Gradle
-      run: ./gradlew build
+      run: ./gradlew clean build
   
   build_and_docker_push:
     name: Build and Push Docker Image
@@ -70,8 +70,11 @@ jobs:
 
       # docker 이미지 빌드
       - name: Build Docker Image
-        run: docker build . -t ${{ secrets.DOCKER_HUB_USERNAME }}/sns-project:${{ github.sha }}
-  
+        run: |
+          pwd
+          ls -al
+          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/sns-project:${{ github.sha }} .
+
       # docker hub에 이미지 올리기
       - name: Push Docker Image to Docker hub
         run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/sns-project:${{ github.sha }}

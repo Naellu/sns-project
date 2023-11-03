@@ -1,6 +1,6 @@
 
-FROM openjdk:11-jdk-slim
+FROM openjdk:11
 LABEL authors="KJJ"
-ARG JAR_FILE=build/libs/*.jar
-COPY ${JAR_FILE} /opt/app/app.jar
-ENTRYPOINT ["java", "-jar", "/opt/app/app.jar"]
+ARG JAR_FILE=./build/libs/sns-0.0.1-SNAPSHOT.jar
+COPY ${JAR_FILE} ./app/sns-0.0.1-SNAPSHOT.jar
+ENTRYPOINT ["java", "-jar", "./app/sns-0.0.1-SNAPSHOT.jar"]
