@@ -8,6 +8,7 @@ class SnsApplicationTests {
 
     @Test
     void contextLoads() {
+        System.out.println("contextLoads()");
     }
 
 }
