@@ -1,0 +1,3 @@
+[submodule "submodule-config"]
+	path = submodule-config
+	url = https://github.com/Naellu/submodule-config.git
