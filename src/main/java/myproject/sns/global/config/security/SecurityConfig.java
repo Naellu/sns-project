@@ -1,4 +1,4 @@
-package myproject.sns.global.config;
+package myproject.sns.global.config.security;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
