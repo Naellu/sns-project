@@ -1,5 +1,4 @@
-package myproject.sns.domain.entity;
-
+package myproject.sns.domain.member.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,20 +10,18 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(schema = "member_test")
 public class User {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "user_id")
     private Long id;
 
-    @Column(nullable=false)
+    @Column(name = "user_name")
     private String name;
 
-    @Column(nullable=false, unique=true)
+    @Column(unique=true, name="user_email")
     private String email;
-
-    @Column(nullable=false)
-    private String password;
 
 }
