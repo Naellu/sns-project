@@ -19,7 +19,7 @@ import java.util.HashMap;
 @Configuration
 @PropertySource({ "classpath:application.yml" })
 @EnableJpaRepositories(
-        basePackages = "myproject.sns.domain.auth.dao",
+        basePackages = "myproject.sns.domain.password.dao",
         entityManagerFactoryRef = "passwordEntityManager",
         transactionManagerRef = "passwordTransactionManager"
 )
@@ -32,7 +32,7 @@ public class PersistencePasswordConfiguration {
     public LocalContainerEntityManagerFactoryBean passwordEntityManager() {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(passwordDataSource());
-        em.setPackagesToScan(new String[] { "myproject.sns.domain.auth.entity" });
+        em.setPackagesToScan(new String[] { "myproject.sns.domain.password.entity" });
         HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
         em.setJpaVendorAdapter(vendorAdapter);
         HashMap<String, Object> properties = new HashMap<>();

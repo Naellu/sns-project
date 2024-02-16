@@ -1,6 +1,6 @@
-package myproject.sns.domain.auth.dao;
+package myproject.sns.domain.password.dao;
 
-import myproject.sns.domain.auth.entity.Password;
+import myproject.sns.domain.password.entity.Password;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PasswordRepository extends JpaRepository<Password, Integer> {

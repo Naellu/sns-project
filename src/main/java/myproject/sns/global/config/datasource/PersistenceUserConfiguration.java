@@ -21,7 +21,10 @@ import java.util.HashMap;
 @Configuration
 @PropertySource({ "classpath:application.yml" })
 @EnableJpaRepositories(
-        basePackages = "myproject.sns.domain.member.dao",
+        basePackages = {
+                "myproject.sns.domain.member.dao",
+                "myproject.sns.global.security.dao"
+        },
         entityManagerFactoryRef = "userEntityManager",
         transactionManagerRef = "userTransactionManager"
 )
@@ -35,7 +38,10 @@ public class PersistenceUserConfiguration {
     public LocalContainerEntityManagerFactoryBean userEntityManager() {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(userDataSource());
-        em.setPackagesToScan(new String[] {"myproject.sns.domain.member.entity"});
+        em.setPackagesToScan(new String[] {
+                "myproject.sns.domain.member.entity",
+                "myproject.sns.global.security.token"
+        });
         HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
         em.setJpaVendorAdapter(vendorAdapter);
         HashMap<String, Object> properties = new HashMap<>();
