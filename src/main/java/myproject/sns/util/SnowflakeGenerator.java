@@ -1,10 +1,12 @@
 package myproject.sns.util;
 
+import org.springframework.stereotype.Component;
 import java.net.NetworkInterface;
 import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.Enumeration;
 
+@Component
 public class SnowflakeGenerator {
     private static final int UNUSED_BITS = 1; // Sign bit, Unused (always set to 0)
     private static final int EPOCH_BITS = 41;
