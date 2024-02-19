@@ -3,19 +3,21 @@ package myproject.sns.global.security.auth;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import myproject.sns.domain.password.dao.PasswordRepository;
-import myproject.sns.domain.password.entity.Password;
 import myproject.sns.domain.member.dao.UserRepository;
 import myproject.sns.domain.member.entity.User;
+import myproject.sns.domain.password.dao.PasswordRepository;
+import myproject.sns.domain.password.entity.Password;
+import myproject.sns.global.security.dao.TokenRepository;
 import myproject.sns.global.security.service.JwtService;
 import myproject.sns.global.security.token.Token;
-import myproject.sns.global.security.dao.TokenRepository;
 import myproject.sns.global.security.token.TokenType;
+import myproject.sns.util.SnowflakeGenerator;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -32,27 +34,23 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final SnowflakeGenerator idGenerator;
 
-    public AuthenticationResponse register(RegisterRequest request) {
-        var user = User.builder()
-                .id(request.getId()) // snowflake로 생성된 id값
+    @Transactional
+    public void register(RegisterRequest request) {
+        long newId = idGenerator.nextId(); // snowflake로 생성된 id값
+        User user = User.builder()
+                .id(newId)
                 .name(request.getName())
                 .email(request.getEmail())
                 .role(request.getRole())
                 .build();
-        var password = Password.builder()
-                .userId(request.getId()) // snowflake로 생성된 id값
+        Password password = Password.builder()
+                .userId(newId)
                 .password(passwordEncoder.encode(request.getPassword()))
                 .build();
-        var savedUser = userRepository.save(user);
+        userRepository.save(user);
         passwordRepository.save(password);
-        var jwtToken = jwtService.generateToken(user);
-        var refreshToken = jwtService.generateRefreshToken(user);
-        saveUserToken(savedUser, jwtToken);
-        return AuthenticationResponse.builder()
-                .accessToken(jwtToken)
-                .refreshToken(refreshToken)
-                .build();
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {

@@ -4,15 +4,18 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import myproject.sns.domain.member.entity.ChangePasswordRequest;
 import myproject.sns.domain.member.service.UserService;
+import myproject.sns.global.exception.CustomException;
 import myproject.sns.global.security.auth.AuthenticationRequest;
 import myproject.sns.global.security.auth.AuthenticationResponse;
 import myproject.sns.global.security.auth.AuthenticationService;
 import myproject.sns.global.security.auth.RegisterRequest;
-import myproject.sns.util.SnowflakeGenerator;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+
+import static myproject.sns.global.exception.CustomErrorCode.EMAIL_DUPLICATED;
 
 @Slf4j
 @RestController
@@ -25,11 +28,12 @@ public class UserController {
 
     // 회원가입
     @PostMapping("/register")
-    public ResponseEntity<?> registerByUser(@RequestBody RegisterRequest request) {
-        SnowflakeGenerator idGenerator = new SnowflakeGenerator();
-        request.setId(idGenerator.nextId());
-        AuthenticationResponse registeredData = authenticationService.register(request);
-        return ResponseEntity.ok(registeredData);
+    public ResponseEntity<?> registerByUser(@Validated @RequestBody RegisterRequest request) {
+        if (userService.existsByEmail(request.getEmail())) {
+            throw new CustomException(EMAIL_DUPLICATED); // 이메일 중복 에러
+        }
+        authenticationService.register(request);
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/authenticate")
