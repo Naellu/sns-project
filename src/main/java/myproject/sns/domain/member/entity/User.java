@@ -20,7 +20,6 @@ import java.util.List;
 public class User implements UserDetails {
 
     @Id
-//    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "user_id")
     private Long id; // 인조 pk
 
@@ -29,9 +28,6 @@ public class User implements UserDetails {
 
     @Column(name="user_email")
     private String email;
-
-//    @Column(name="user_password")
-//    private String password;
 
     @Enumerated(EnumType.STRING)
     private Role role;
@@ -46,7 +42,6 @@ public class User implements UserDetails {
 
     @Override
     public String getPassword() {
-//        return password;
         return null;
     }
 

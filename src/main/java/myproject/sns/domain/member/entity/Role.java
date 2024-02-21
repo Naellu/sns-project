@@ -8,6 +8,7 @@ import java.util.Set;
 
 import static myproject.sns.domain.member.entity.Permission.*;
 
+@Getter
 @RequiredArgsConstructor
 public enum Role {
 
