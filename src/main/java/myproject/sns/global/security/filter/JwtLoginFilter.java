@@ -1,8 +1,13 @@
 package myproject.sns.global.security.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import myproject.sns.domain.member.entity.User;
+import myproject.sns.global.security.auth.AuthenticationResponse;
+import myproject.sns.global.security.auth.AuthenticationService;
 import myproject.sns.global.security.dto.LoginRequest;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -17,10 +22,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Slf4j
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class JwtLoginFilter extends UsernamePasswordAuthenticationFilter {
 
-//    private final JwtService jwtService;
+    private final AuthenticationService authService;
 
     // 로그인 요청 시 들어있는 사용자 정보로 인증 시도
     @Override
@@ -43,10 +48,11 @@ public class JwtLoginFilter extends UsernamePasswordAuthenticationFilter {
     // 로그인 성공 시 인증
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
-        // jwt 토큰 발급 및 반환
-        log.info("로그인 성공");
-        log.info("[successfulAuthentication] Authentication : {}", authResult);
-        super.successfulAuthentication(request, response, chain, authResult);
+        AuthenticationResponse authResponse = authService.IssuingJwtTokens(authResult.getName());
+        log.info("AuthenticationResponse : {}", authResponse);
+
+        response.setHeader("Authorization", "Bearer " + authResponse.getAccessToken()); // accessToken 설정
+        response.setHeader("Refresh", authResponse.getRefreshToken()); // refreshToken은 body에도 설정 가능
     }
 
     // 로그인 실패 시 동작
