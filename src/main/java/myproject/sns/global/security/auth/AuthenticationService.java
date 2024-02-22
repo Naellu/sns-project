@@ -13,8 +13,6 @@ import myproject.sns.global.security.token.Token;
 import myproject.sns.global.security.token.TokenType;
 import myproject.sns.util.SnowflakeGenerator;
 import org.springframework.http.HttpHeaders;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,7 +32,6 @@ public class AuthenticationService {
     private final TokenRepository tokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
-    private final AuthenticationManager authenticationManager;
     private final SnowflakeGenerator idGenerator;
 
     @Transactional
@@ -54,19 +51,17 @@ public class AuthenticationService {
         passwordRepository.save(password);
     }
 
-    public AuthenticationResponse authenticate(AuthenticationRequest request) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getEmail(),
-                        request.getPassword()
-                )
-        );
-
-        User user = userRepository.findByEmail(request.getEmail()).orElseThrow();
+    public AuthenticationResponse IssuingJwtTokens(String username) {
+        User user = userRepository.findByName(username).orElseThrow();
         String jwtToken = jwtService.generateToken(user);
         String refreshToken = jwtService.generateRefreshToken(user);
+
+        // 기존 토큰 강제 만료
         revokeAllUserTokens(user);
+        // 토큰 저장
         saveUserToken(user, jwtToken);
+
+        // 액세스 토큰, 리프레쉬 토큰 값을 가지는 AuthenticationResponse객체 반환
         return AuthenticationResponse.builder()
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)

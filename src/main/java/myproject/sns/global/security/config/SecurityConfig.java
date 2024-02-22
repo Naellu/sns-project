@@ -2,6 +2,7 @@ package myproject.sns.global.security.config;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import myproject.sns.global.security.auth.AuthenticationService;
 import myproject.sns.global.security.filter.JwtAuthenticationFilter;
 import myproject.sns.global.security.filter.JwtLoginFilter;
 import myproject.sns.global.security.provider.CustomAuthenticationProvider;
@@ -31,6 +32,7 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final LogoutHandler logoutHandler;
+    private final AuthenticationService authenticationService;
     private final CustomUserDetailsService customUserDetailsService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationConfiguration authenticationConfiguration;
@@ -63,7 +65,7 @@ public class SecurityConfig {
 
     @Bean
     public JwtLoginFilter jwtLoginFilter() throws Exception {
-        JwtLoginFilter jwtLoginFilter = new JwtLoginFilter();
+        JwtLoginFilter jwtLoginFilter = new JwtLoginFilter(authenticationService);
         jwtLoginFilter.setAuthenticationManager(authenticationManager());
         return jwtLoginFilter;
     }

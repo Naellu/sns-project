@@ -5,8 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import myproject.sns.domain.member.entity.ChangePasswordRequest;
 import myproject.sns.domain.member.service.UserService;
 import myproject.sns.global.exception.CustomException;
-import myproject.sns.global.security.auth.AuthenticationRequest;
-import myproject.sns.global.security.auth.AuthenticationResponse;
 import myproject.sns.global.security.auth.AuthenticationService;
 import myproject.sns.global.security.auth.RegisterRequest;
 import org.springframework.http.ResponseEntity;
@@ -34,11 +32,6 @@ public class UserController {
         }
         authenticationService.register(request);
         return ResponseEntity.ok().build();
-    }
-
-    @PostMapping("/authenticate")
-    public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) {
-        return ResponseEntity.ok(authenticationService.authenticate(request));
     }
 
     // 비밀번호 변경
