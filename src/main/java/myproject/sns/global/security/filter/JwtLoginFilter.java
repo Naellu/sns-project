@@ -17,6 +17,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -50,9 +51,14 @@ public class JwtLoginFilter extends UsernamePasswordAuthenticationFilter {
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         AuthenticationResponse authResponse = authService.IssuingJwtTokens(authResult.getName());
         log.info("AuthenticationResponse : {}", authResponse);
+//        response.setHeader("Authorization", "Bearer " + authResponse.getAccessToken());
+        Cookie refreshTokenCookie = new Cookie("Refresh", authResponse.getRefreshToken());
+        refreshTokenCookie.setHttpOnly(true); // httpOnly 설정
+        refreshTokenCookie.setSecure(true); // HTTPS 프로토콜만 허용
+        refreshTokenCookie.setPath("/");
+        refreshTokenCookie.setMaxAge(7 * 24 * 60 * 60); // 만료 기간
 
-        response.setHeader("Authorization", "Bearer " + authResponse.getAccessToken()); // accessToken 설정
-        response.setHeader("Refresh", authResponse.getRefreshToken()); // refreshToken은 body에도 설정 가능
+        response.addCookie(refreshTokenCookie);
     }
 
     // 로그인 실패 시 동작

@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react'
 import { Input } from "@material-tailwind/react";
+import axios from "axios";
 
 import socialLoginVector01 from '../../img/login/Vector 12_10.png'
 import socialLoginVector02 from '../../img/login/Vector 22_11.png'
@@ -8,9 +9,32 @@ import googleLoginImg from '../../img/login/android_light_sq_na@4x 14_29.png'
 // import mainLogo from './main_logo_img_file.png'
 
 const LoginPage = () => {
-    const clickLogEvent = () => {
-        console.log("element 클릭됨");
+    const [loginRequest, setLoginRequest] = useState({
+        username: "",
+        password: "",
+    })
+
+    const handleChange = (e) => {
+        const {name, value} = e.target;
+        setLoginRequest({
+            ...loginRequest,
+            [name]: value,
+        });
+    };
+
+    const handleLogin = async (e) => {
+        e.preventDefault();
+        try {
+            const response = await axios.post('/local/login', loginRequest);
+            console.log("로그인 성공 테스트 :");
+            console.log(response);
+            // TODO : 이전 페이지 및 홈화면으로 이동
+        } catch (error) {
+            console.error("로그인 실패 테스트 : " + error);
+            // TODO : 사용자에게 실패 표시 보여주기
+        }
     }
+
 
     return (
         <div className="bg-white flex flex-row justify-center w-full">
@@ -21,23 +45,25 @@ const LoginPage = () => {
                         <div
                             className="absolute w-[249px] h-[46px] top-[50px] left-[60px] [font-family:'Pretendard-Variable'] font-normal text-black text-[40px] text-center tracking-[0] leading-[normal] ">NAELLU
                         </div>
-                        {/*<img*/}
-                        {/*    className="absolute w-[249px] h-[86px] top-[40px] left-[60px] object-cover"*/}
-                        {/*    // src={mainLogo}*/}
-                        {/*/>*/}
 
                         <input
+                            name="username"
                             className="absolute w-[249px] h-[44px] top-[153px] left-[60px] bg-[#F5F5F5] border-[0.1px] border-solid border-[#C9C9C9] [font-family:'Pretendard-Variable'] font-normal text-[#8d8d8d] text-[12px] tracking-[0] leading-[normal] p-3"
-                            placeholder={"아이디 또는 이메일"}/>
+                            placeholder={"아이디 또는 이메일"}
+                            onChange={handleChange}
+                        />
                         <input
+                            name="password"
                             className="absolute w-[249px] h-[44px] top-[227px] left-[60px] bg-[#F5F5F5] border-[0.1px] border-solid border-[#C9C9C9] [font-family:'Pretendard-Variable'] font-normal text-[#8d8d8d] text-[12px] tracking-[0] leading-[normal] p-3"
-                            placeholder={"비밀번호"}/>
+                            placeholder={"비밀번호"}
+                            onChange={handleChange}
+                        />
 
                         <div
                             className="absolute w-[249px] h-[39px] top-[304px] left-[60px] bg-[#abeaff] rounded-[10px]">
                             <button
                                 className="top-[10px] left-[105px] [font-family:'Pretendard-Variable'] font-bold text-white text-[16px] whitespace-nowrap absolute tracking-[0] leading-[normal]"
-                                onClick={clickLogEvent}>
+                                onClick={handleLogin}>
                                 로그인
                             </button>
                         </div>
@@ -57,13 +83,11 @@ const LoginPage = () => {
                             className="absolute w-[94px] h-[46px] top-[414px] left-[70px] object-cover"
                             alt="Kakao login large"
                             src={kakaoLoginImg}
-                            onClick={clickLogEvent}
                         />
                         <img
                             className="absolute w-[46px] h-[46px] top-[414px] left-[240px] object-cover"
                             alt="Android light sq na"
                             src={googleLoginImg}
-                            onClick={clickLogEvent}
                         />
 
                         <div
