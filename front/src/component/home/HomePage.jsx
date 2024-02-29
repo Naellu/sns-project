@@ -2,9 +2,11 @@ import React from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {faBars, faMagnifyingGlass} from "@fortawesome/free-solid-svg-icons";
 import {faBell, faEnvelope, faSquarePlus, faUser} from "@fortawesome/free-regular-svg-icons";
+import axios from "axios";
 
 import homeIcon from "../../img/home/icon_home.svg";
 
+axios.defaults.withCredentials = 'true';
 
 const HomePage = () => {
 
