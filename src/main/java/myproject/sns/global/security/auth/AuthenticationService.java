@@ -53,25 +53,25 @@ public class AuthenticationService {
 
     public AuthenticationResponse IssuingJwtTokens(String username) {
         User user = userRepository.findByName(username).orElseThrow();
-        String jwtToken = jwtService.generateToken(user);
+        String accessToken = jwtService.generateToken(user);
         String refreshToken = jwtService.generateRefreshToken(user);
 
         // 기존 토큰 강제 만료
         revokeAllUserTokens(user);
-        // 토큰 저장
-        saveUserToken(user, jwtToken);
+        // 리프레쉬 토큰 저장
+        saveUsersRefreshToken(user, refreshToken);
 
-        // 액세스 토큰, 리프레쉬 토큰 값을 가지는 AuthenticationResponse객체 반환
+        // 액세스 토큰, 리프레쉬 토큰 값을 가지는 AuthenticationResponse 반환
         return AuthenticationResponse.builder()
-                .accessToken(jwtToken)
+                .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .build();
     }
 
-    private void saveUserToken(User user, String jwtToken) {
+    private void saveUsersRefreshToken(User user, String refreshToken) {
         Token token = Token.builder()
                 .user(user)
-                .token(jwtToken)
+                .token(refreshToken)
                 .tokenType(TokenType.BEARER)
                 .expired(false)
                 .revoked(false)
@@ -105,7 +105,7 @@ public class AuthenticationService {
             if (jwtService.isTokenValid(refreshToken, user)) {
                 String accessToken = jwtService.generateToken(user);
                 revokeAllUserTokens(user);
-                saveUserToken(user, accessToken);
+//                saveUserToken(user, accessToken);
                 AuthenticationResponse authResponse = AuthenticationResponse.builder()
                         .accessToken(accessToken)
                         .refreshToken(refreshToken)

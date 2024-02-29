@@ -49,16 +49,23 @@ public class JwtLoginFilter extends UsernamePasswordAuthenticationFilter {
     // 로그인 성공 시 인증
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
+        // accessToken, refreshToken 발급
         AuthenticationResponse authResponse = authService.IssuingJwtTokens(authResult.getName());
         log.info("AuthenticationResponse : {}", authResponse);
-//        response.setHeader("Authorization", "Bearer " + authResponse.getAccessToken());
+
+        // refreshToken 설정 및 쿠키에 저장
         Cookie refreshTokenCookie = new Cookie("Refresh", authResponse.getRefreshToken());
         refreshTokenCookie.setHttpOnly(true); // httpOnly 설정
         refreshTokenCookie.setSecure(true); // HTTPS 프로토콜만 허용
         refreshTokenCookie.setPath("/");
         refreshTokenCookie.setMaxAge(7 * 24 * 60 * 60); // 만료 기간
-
         response.addCookie(refreshTokenCookie);
+
+        // accessToken 설정 및 응답 바디에 저장
+        authResponse.setRefreshToken(null);
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write(new ObjectMapper().writeValueAsString(authResponse));
     }
 
     // 로그인 실패 시 동작
