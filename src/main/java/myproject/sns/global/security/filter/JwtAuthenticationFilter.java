@@ -2,6 +2,7 @@ package myproject.sns.global.security.filter;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import myproject.sns.global.security.service.JwtService;
 import myproject.sns.global.security.dao.TokenRepository;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -33,6 +35,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull FilterChain filterChain) throws ServletException, IOException {
 
         if (request.getServletPath().contains("/api/v1")) {
+            log.error("/api/v1 경로로 시작했습니다");
             filterChain.doFilter(request, response);
             return;
         }
