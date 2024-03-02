@@ -2,6 +2,7 @@ package myproject.sns.global.security.config;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import myproject.sns.global.exception.handler.CustomAuthenticationEntryPoint;
 import myproject.sns.global.security.auth.AuthenticationService;
 import myproject.sns.global.security.filter.JwtAuthenticationFilter;
 import myproject.sns.global.security.filter.JwtLoginFilter;
@@ -37,12 +38,19 @@ public class SecurityConfig {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationConfiguration authenticationConfiguration;
 
+    private static final String[] PERMIT_URL_ARRAY = {
+            "/login",
+            "/api/v1/user/register",
+            "/api/p1/**",
+            "/error"
+    };
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
                 .csrf().disable()
-                .authorizeRequests(req -> req.antMatchers("/", "/login", "/api/v1/user/register").permitAll()
+                .authorizeRequests(req -> req.antMatchers(PERMIT_URL_ARRAY).permitAll()
                         .anyRequest().authenticated())
 
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
@@ -53,7 +61,9 @@ public class SecurityConfig {
                         logout.logoutUrl("/api/v1/auth/logout")
                                 .addLogoutHandler(logoutHandler)
                                 .logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext())
-                );
+                )
+                .exceptionHandling()
+                .authenticationEntryPoint(new CustomAuthenticationEntryPoint());
 
         return http.build();
     }

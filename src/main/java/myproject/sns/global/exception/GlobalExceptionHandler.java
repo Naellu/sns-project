@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
 @Slf4j
 @RestControllerAdvice
@@ -35,4 +36,11 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResult, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(NoHandlerFoundException.class)
+    protected ResponseEntity<ErrorResult> handleNotFoundExceptions(NoHandlerFoundException ex) {
+        String errorMessage = "잘못된 요청 경로입니다.";
+        ErrorResult errorResult = new ErrorResult("NOT_FOUND", errorMessage);
+        log.error("[GlobalExceptionHandler] errorName: NoHandlerFoundException, message: {}", errorMessage);
+        return new ResponseEntity<>(errorResult, HttpStatus.NOT_FOUND);
+    }
 }
